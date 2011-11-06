@@ -1,12 +1,12 @@
 // game resources
 var g_resources = [{
-    name: "floor",
+    name: "area01_level_tiles",
     type: "image",
-    src: "img/resources/floor.png"
+    src: "img/resources/area01_tileset/area01_level_tiles.png"
 }, {
-    name: "test",
+    name: "t18",
     type: "tmx",
-    src: "img/maps/test.tmx"
+    src: "img/maps/t18.tmx"
 }];
 
 var jsApp = {
@@ -50,7 +50,7 @@ var PlayScreen = me.ScreenObject.extend({
     onResetEvent : function() {
         // stuff to reset on state change
         // load a level
-        me.levelDirector.loadLevel("test");
+        me.levelDirector.loadLevel("t18");
     },
     /* ---
 
