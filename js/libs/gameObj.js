@@ -15,7 +15,10 @@ var PlayerEntity = me.ObjectEntity.extend({
         this.parent(x, y, settings);
     
         // set the walking & jumping speed
-        this.setVelocity(3, 15);
+        this.setVelocity(3, 3);
+        
+        // set the walking speed
+        //this.setFriction(0.5, 0.5);
     
         // adjust the bounding box
         this.updateColRect(8, 48, -1, 0);
@@ -24,15 +27,15 @@ var PlayerEntity = me.ObjectEntity.extend({
         this.gravity = 0;
 
         //this.firstUpdates = 0;
-        this.direction = 'right';
+        this.direction = 'left';
     
         // set the display to follow our position on both axis
         me.game.viewport.follow(this.pos, me.game.viewport.AXIS.BOTH);
                        
-        this.addAnimation("down", [10,11,12]);
-        this.addAnimation("left", [1,2,3]);
-        this.addAnimation("up", [4,5,6]);
-        this.addAnimation("right", [7,8,9]);
+        this.addAnimation("down", [9,10,11,10]);
+        this.addAnimation("left", [0,1,2,1]);
+        this.addAnimation("up", [3,4,5,4]);
+        this.addAnimation("right", [6,7,8,7]);
 
         
     },
@@ -41,19 +44,43 @@ var PlayerEntity = me.ObjectEntity.extend({
 update the player pos
 ------ */
 update: function() {
+            hasSpeed = this.vel.y != 0 || this.vel.x != 0
+            if (me.input.isKeyPressed('left'))
+            {
+                this.animationspeed = me.sys.fps / 10;
+                this.vel.x = -this.accel.x * me.timer.tick
+                this.vel.y = 0;
+                this.setCurrentAnimation('left')
+                this.direction = 'left'
+            }
+            else if (me.input.isKeyPressed('right'))
+            {
+                this.animationspeed = me.sys.fps / 10;
+                this.vel.x = this.accel.x * me.timer.tick 
+                this.vel.y = 0;
+                this.setCurrentAnimation('right')
+                this.direction = 'right'
+            }
 
-    if (me.input.isKeyPressed('left')) {
-        this.doWalk(true);
-    } else if (me.input.isKeyPressed('right')) {
-        this.doWalk(false);
-    } else {
-        this.vel.x = 0;
-    }
-    if (me.input.isKeyPressed('jump')) {
-        if (this.doJump()) {
-            me.audio.play("jump");
-        }
-    }
+            else if (me.input.isKeyPressed('up'))
+            {
+                this.animationspeed = me.sys.fps / 10;
+                this.vel.y = -this.accel.y * me.timer.tick 
+                this.vel.x = 0;
+                this.setCurrentAnimation('up')
+                this.direction = 'up'
+            }
+            else if (me.input.isKeyPressed('down'))
+            {
+                this.animationspeed = me.sys.fps / 10;
+                this.vel.y = this.accel.y * me.timer.tick 
+                this.vel.x = 0;
+                this.setCurrentAnimation('down')
+                this.direction = 'down'
+            } else {
+                this.vel.x = 0;
+                this.vel.y = 0;
+            }
 
     // check & update player movement
     updated = this.updateMovement();

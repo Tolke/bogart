@@ -1,83 +1,89 @@
 //game resources
 var g_resources = [{
-    name: "paredes",
-    type: "image",
-    src: "data/Texturas/paredes.png"
+    name : "paredes",
+    type : "image",
+    src : "data/Texturas/paredes.png"
 }, {
-    name: "suelos",
-    type: "image",
-    src: "data/Texturas/suelos.png"
-},
-{
-    name: "area01",
-    type: "tmx",
-    src: "data/prueba01.tmx"
+    name : "suelos",
+    type : "image",
+    src : "data/Texturas/suelos.png"
 }, {
-    name: "area02",
-    type: "tmx",
-    src: "data/tutorial2.tmx"
+    name : "atrezzo",
+    type : "image",
+    src : "data/Texturas/atrezzo.png"
 }, {
-    name: "personajillo",
-    type: "image",
-    src: "data/sprite/personajillo.png"
+    name : "sombras-par",
+    type : "image",
+    src : "data/Texturas/sombras-par.png"
+}, {
+    name : "area01",
+    type : "tmx",
+    src : "data/Nivel01.tmx"
+}, {
+    name : "area02",
+    type : "tmx",
+    src : "data/tutorial2.tmx"
+}, {
+    name : "personajillo",
+    type : "image",
+    src : "data/sprite/personajillo.png"
 },
 // the parallax background
 {
-    name: "area01_bkg0",
-    type: "image",
-    src: "data/area01_parallax/area01_bkg0.png"
+    name : "area01_bkg0",
+    type : "image",
+    src : "data/area01_parallax/area01_bkg0.png"
 }, {
-    name: "area01_bkg1",
-    type: "image",
-    src: "data/area01_parallax/area01_bkg1.png"
+    name : "area01_bkg1",
+    type : "image",
+    src : "data/area01_parallax/area01_bkg1.png"
 },
 // the spinning coin spritesheet
 {
-    name: "spinning_coin_gold",
-    type: "image",
-    src: "data/sprite/spinning_coin_gold.png"
-}, 
+    name : "spinning_coin_gold",
+    type : "image",
+    src : "data/sprite/spinning_coin_gold.png"
+},
 // our enemty entity
 {
-    name: "wheelie_right",
-    type: "image",
-    src: "data/sprite/wheelie_right.png"
-}, 
+    name : "wheelie_right",
+    type : "image",
+    src : "data/sprite/wheelie_right.png"
+},
 // game font
 {
-    name: "32x32_font",
-    type: "image",
-    src: "data/sprite/32x32_font.png"
+    name : "32x32_font",
+    type : "image",
+    src : "data/sprite/32x32_font.png"
 },
 // audio resources
 {
-    name: "cling",
-    type: "audio",
-    src: "data/audio/",
-    channel: 2
+    name : "cling",
+    type : "audio",
+    src : "data/audio/",
+    channel : 2
 }, {
-    name: "stomp",
-    type: "audio",
-    src: "data/audio/",
-    channel: 1
+    name : "stomp",
+    type : "audio",
+    src : "data/audio/",
+    channel : 1
 }, {
-    name: "jump",
-    type: "audio",
-    src: "data/audio/",
-    channel: 1
+    name : "jump",
+    type : "audio",
+    src : "data/audio/",
+    channel : 1
 }, {
-    name: "DST-InertExponent",
-    type: "audio",
-    src: "data/audio/",
-    channel: 1
+    name : "DST-InertExponent",
+    type : "audio",
+    src : "data/audio/",
+    channel : 1
 },
 // title screen
 {
-    name: "title_screen",
-    type: "image",
-    src: "data/GUI/title_screen.png"
+    name : "title_screen",
+    type : "image",
+    src : "data/GUI/title_screen.png"
 }];
-
 
 var jsApp = {
     /* ---
@@ -85,10 +91,10 @@ var jsApp = {
      Initialize the jsApp
 
      --- */
-    onload: function() {
+    onload : function() {
 
         // init the video
-        if (!me.video.init('jsapp', 640, 480, false, 1.0)) {
+        if(!me.video.init('jsapp', 640, 480, false, 1.0)) {
             alert("Sorry but your browser does not support html 5 canvas.");
             return;
         }
@@ -106,47 +112,45 @@ var jsApp = {
         me.state.change(me.state.LOADING);
         //me.debug.renderHitBox = true;
     },
-
     /* ---
 
-    callback when everything is loaded
+     callback when everything is loaded
 
-    --- */
-	loaded: function() {
-	    // set the "Play/Ingame" Screen Object
-	    me.state.set(me.state.MENU, new TitleScreen());
-	
-	    // set the "Play/Ingame" Screen Object
-	    me.state.set(me.state.PLAY, new PlayScreen());
-	
-	    // set a global fading transition for the screen
-	    me.state.transition("fade", "#FFFFFF", 15);
-	
-	    // add our player entity in the entity pool
-	    me.entityPool.add("mainPlayer", PlayerEntity);
-	    me.entityPool.add("CoinEntity", CoinEntity);
-	    me.entityPool.add("EnemyEntity", EnemyEntity);
-	
-	    // enable the keyboard
-        me.input.bindKey(me.input.KEY.LEFT,     "left");
-        me.input.bindKey(me.input.KEY.RIGHT,    "right");
-        me.input.bindKey(me.input.KEY.UP,     "up");
-        me.input.bindKey(me.input.KEY.DOWN,    "down");
-	
-	    // display the menu title
-	    me.state.change(me.state.MENU);
-	}
+     --- */
+    loaded : function() {
+        // set the "Play/Ingame" Screen Object
+        me.state.set(me.state.MENU, new TitleScreen());
 
+        // set the "Play/Ingame" Screen Object
+        me.state.set(me.state.PLAY, new PlayScreen());
+
+        // set a global fading transition for the screen
+        me.state.transition("fade", "#FFFFFF", 15);
+
+        // add our player entity in the entity pool
+        me.entityPool.add("mainPlayer", PlayerEntity);
+        me.entityPool.add("CoinEntity", CoinEntity);
+        me.entityPool.add("EnemyEntity", EnemyEntity);
+
+        // enable the keyboard
+        me.input.bindKey(me.input.KEY.LEFT, "left");
+        me.input.bindKey(me.input.KEY.RIGHT, "right");
+        me.input.bindKey(me.input.KEY.UP, "up");
+        me.input.bindKey(me.input.KEY.DOWN, "down");
+
+        // display the menu title
+        me.state.change(me.state.MENU);
+    }
 };
 // jsApp
 /* the in game stuff*/
 var PlayScreen = me.ScreenObject.extend({
 
-    onResetEvent: function() {
-    	
-    	// play the audio track
-   		me.audio.playTrack("DST-InertExponent");
-   		 
+    onResetEvent : function() {
+
+        // play the audio track
+        me.audio.playTrack("DST-InertExponent");
+
         // load a level
         me.levelDirector.loadLevel("area01");
 
@@ -160,22 +164,20 @@ var PlayScreen = me.ScreenObject.extend({
         me.game.sort();
 
     },
-
     /* ---
 
-    action to perform when game is finished (state change)
+     action to perform when game is finished (state change)
 
-    --- */
-    onDestroyEvent: function() {
-            // remove the HUD
-		    me.game.disableHUD();
-		
-		    // stop the current audio track
-		    me.audio.stopTrack();
+     --- */
+    onDestroyEvent : function() {
+        // remove the HUD
+        me.game.disableHUD();
+
+        // stop the current audio track
+        me.audio.stopTrack();
     }
-
 });
-    
+
 //bootstrap :)
 window.onReady(function() {
     jsApp.onload();
