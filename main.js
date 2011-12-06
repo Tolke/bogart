@@ -1,20 +1,25 @@
 //game resources
 var g_resources = [{
-    name: "area01_level_tiles",
+    name: "paredes",
     type: "image",
-    src: "data/area01_tileset/area01_level_tiles.png"
+    src: "data/Texturas/paredes.png"
 }, {
+    name: "suelos",
+    type: "image",
+    src: "data/Texturas/suelos.png"
+},
+{
     name: "area01",
     type: "tmx",
-    src: "data/tutorial.tmx"
+    src: "data/prueba01.tmx"
 }, {
     name: "area02",
     type: "tmx",
     src: "data/tutorial2.tmx"
 }, {
-    name: "gripe_run_right",
+    name: "personajillo",
     type: "image",
-    src: "data/sprite/gripe_run_right.png"
+    src: "data/sprite/personajillo.png"
 },
 // the parallax background
 {
@@ -123,9 +128,10 @@ var jsApp = {
 	    me.entityPool.add("EnemyEntity", EnemyEntity);
 	
 	    // enable the keyboard
-	    me.input.bindKey(me.input.KEY.LEFT, "left");
-	    me.input.bindKey(me.input.KEY.RIGHT, "right");
-	    me.input.bindKey(me.input.KEY.X, "jump", true);
+        me.input.bindKey(me.input.KEY.LEFT,     "left");
+        me.input.bindKey(me.input.KEY.RIGHT,    "right");
+        me.input.bindKey(me.input.KEY.UP,     "up");
+        me.input.bindKey(me.input.KEY.DOWN,    "down");
 	
 	    // display the menu title
 	    me.state.change(me.state.MENU);

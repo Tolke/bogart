@@ -1,6 +1,6 @@
-/*------------------- 
-a player entity
--------------------------------- */
+/*-------------------
+ a player entity
+ -------------------------------- */
 var PlayerEntity = me.ObjectEntity.extend({
 
     /* -----
@@ -10,20 +10,33 @@ var PlayerEntity = me.ObjectEntity.extend({
     ------ */
 
     init: function(x, y, settings) {
-	    // call the constructor
-	    this.parent(x, y, settings);
-	
-	    // set the walking & jumping speed
-	    this.setVelocity(3, 15);
-	
-	    // adjust the bounding box
-	    this.updateColRect(8, 48, -1, 0);
-	
-	    // set the display to follow our position on both axis
-	    me.game.viewport.follow(this.pos, me.game.viewport.AXIS.BOTH);
-		
-	},
+
+       // call the constructor
+        this.parent(x, y, settings);
     
+        // set the walking & jumping speed
+        this.setVelocity(3, 15);
+    
+        // adjust the bounding box
+        this.updateColRect(8, 48, -1, 0);
+        
+        // disable gravity
+        this.gravity = 0;
+
+        //this.firstUpdates = 0;
+        this.direction = 'right';
+    
+        // set the display to follow our position on both axis
+        me.game.viewport.follow(this.pos, me.game.viewport.AXIS.BOTH);
+                       
+        this.addAnimation("down", [10,11,12]);
+        this.addAnimation("left", [1,2,3]);
+        this.addAnimation("up", [4,5,6]);
+        this.addAnimation("right", [7,8,9]);
+
+        
+    },
+
 /* -----
 update the player pos
 ------ */
@@ -37,29 +50,29 @@ update: function() {
         this.vel.x = 0;
     }
     if (me.input.isKeyPressed('jump')) {
-	    if (this.doJump()) {
-	        me.audio.play("jump");
-	    }
-	}
+        if (this.doJump()) {
+            me.audio.play("jump");
+        }
+    }
 
     // check & update player movement
     updated = this.updateMovement();
 
     // check for collision
-	res = me.game.collide(this);
-	
-	if (res) {
-	    if (res.type == me.game.ENEMY_OBJECT) {
-	        if ((res.y > 0) && ! this.jumping) {
-	            // bounce
-	            me.audio.play("stomp");
-	            this.forceJump();
-	        } else {
-	            // let's flicker in case we touched an enemy
-	            this.flicker(45);
-	        }
-	    }
-	}
+    res = me.game.collide(this);
+    
+    if (res) {
+        if (res.type == me.game.ENEMY_OBJECT) {
+            if ((res.y > 0) && ! this.jumping) {
+                // bounce
+                me.audio.play("stomp");
+                this.forceJump();
+            } else {
+                // let's flicker in case we touched an enemy
+                this.flicker(45);
+            }
+        }
+    }
 
     // update animation
     if (updated) {
@@ -71,39 +84,36 @@ update: function() {
 
 });
 
+
 /*----------------
  a Coin entity
------------------------- */
+ ------------------------ */
 var CoinEntity = me.CollectableEntity.extend({
     // extending the init function is not mandatory
     // unless you need to add some extra initialization
-    init: function(x, y, settings) {
-    	settings.image = "spinning_coin_gold";
+    init : function(x, y, settings) {
+        settings.image = "spinning_coin_gold";
         settings.spritewidth = 32;
         // call the parent constructor
         this.parent(x, y, settings);
         //print("Hola /n");
     },
-
     // this function is called by the engine, when
     // an object is destroyed (here collected)
-    
-	onDestroyEvent : function ()
-	{		
-		// do something when collide
-		me.audio.play("cling");
-		// increase score
-		me.game.HUD.updateItemValue("score", 250);
-	}
-       
 
+    onDestroyEvent : function() {
+        // do something when collide
+        me.audio.play("cling");
+        // increase score
+        me.game.HUD.updateItemValue("score", 250);
+    }
 });
 
 /* --------------------------
-an enemy Entity
------------------------- */
+ an enemy Entity
+ ------------------------ */
 var EnemyEntity = me.ObjectEntity.extend({
-    init: function(x, y, settings) {
+    init : function(x, y, settings) {
         // define this here instead of tiled
         //settings.image = "wheelie_right";
         //settings.spritewidth = 64;
@@ -128,28 +138,26 @@ var EnemyEntity = me.ObjectEntity.extend({
         this.type = me.game.ENEMY_OBJECT;
 
     },
-
     // call by the engine when colliding with another object
     // obj parameter corresponds to the other object (typically the player) touching this one
-    onCollision: function(res, obj) {
+    onCollision : function(res, obj) {
 
         // res.y >0 means touched by something on the bottom
         // which mean at top position for this one
-        if (this.alive && (res.y > 0) && obj.falling) {
+        if(this.alive && (res.y > 0) && obj.falling) {
             this.flicker(45);
         }
     },
-
     // manage the enemy movement
-    update: function() {
+    update : function() {
         // do nothing if not visible
-        if (!this.visible && ! this.flickering)
+        if(!this.visible && !this.flickering)
             return false;
 
-        if (this.alive) {
-            if (this.walkLeft && this.pos.x <= this.startX) {
+        if(this.alive) {
+            if(this.walkLeft && this.pos.x <= this.startX) {
                 this.walkLeft = false;
-            } else if (!this.walkLeft && this.pos.x >= this.endX) {
+            } else if(!this.walkLeft && this.pos.x >= this.endX) {
                 this.walkLeft = true;
             }
 
@@ -161,7 +169,7 @@ var EnemyEntity = me.ObjectEntity.extend({
         // check & update movement
         updated = this.updateMovement();
 
-        if (updated) {
+        if(updated) {
             // update the object animation
             this.parent();
         }
@@ -169,44 +177,42 @@ var EnemyEntity = me.ObjectEntity.extend({
     }
 });
 
-/*-------------- 
-a score HUD Item
---------------------- */
+/*--------------
+ a score HUD Item
+ --------------------- */
 
 var ScoreObject = me.HUD_Item.extend({
-    init: function(x, y) {
+    init : function(x, y) {
         // call the parent constructor
         this.parent(x, y);
         // create a font
         this.font = new me.BitmapFont("32x32_font", 32);
     },
-
     /* -----
 
-    draw our score
+     draw our score
 
-    ------ */
-    draw: function(context, x, y) {
+     ------ */
+    draw : function(context, x, y) {
         this.font.draw(context, this.value, this.pos.x + x, this.pos.y + y);
     }
-
 });
 
 /*----------------------
 
-    A title screen
+ A title screen
 
-    ----------------------*/
+ ----------------------*/
 
 /*----------------------
 
-    A title screen
+ A title screen
 
-  ----------------------*/
+ ----------------------*/
 
 var TitleScreen = me.ScreenObject.extend({
     // constructor
-    init: function() {
+    init : function() {
         this.parent(true);
 
         // title screen image
@@ -219,10 +225,9 @@ var TitleScreen = me.ScreenObject.extend({
         this.scroller = "A SMALL STEP BY STEP TUTORIAL FOR GAME CREATION WITH MELONJS       ";
         this.scrollerpos = 600;
     },
-
     // reset function
-    onResetEvent: function() {
-        if (this.title == null) {
+    onResetEvent : function() {
+        if(this.title == null) {
             // init stuff if not yet done
             this.title = me.loader.getImage("title_screen");
             // font to display the menu items
@@ -240,7 +245,7 @@ var TitleScreen = me.ScreenObject.extend({
 
         // a tween to animate the arrow
         this.scrollertween = new me.Tween(this).to({
-            scrollerpos: -2200
+            scrollerpos : -2200
         }, 10000).onComplete(this.scrollover.bind(this)).start();
 
         // enable the keyboard
@@ -250,40 +255,34 @@ var TitleScreen = me.ScreenObject.extend({
         me.audio.play("cling");
 
     },
-
     // some callback for the tween objects
-    scrollover: function() {
+    scrollover : function() {
         // reset to default value
         this.scrollerpos = 640;
         this.scrollertween.to({
-            scrollerpos: -2200
+            scrollerpos : -2200
         }, 10000).onComplete(this.scrollover.bind(this)).start();
     },
-
     // update function
-    update: function() {
+    update : function() {
         // enter pressed ?
-        if (me.input.isKeyPressed('enter')) {
+        if(me.input.isKeyPressed('enter')) {
             me.state.change(me.state.PLAY);
         }
         return true;
     },
-
     // draw function
-    draw: function(context) {
+    draw : function(context) {
         context.drawImage(this.title, 0, 0);
 
         this.font.draw(context, "PRESS ENTER TO PLAY", 20, 240);
         this.scrollerfont.draw(context, this.scroller, this.scrollerpos, 440);
     },
-
     // destroy function
-    onDestroyEvent: function() {
+    onDestroyEvent : function() {
         me.input.unbindKey(me.input.KEY.ENTER);
 
         //just in case
         this.scrollertween.stop();
     },
-
-    });
-
+});
