@@ -20,13 +20,9 @@ var g_resources = [{
     type : "tmx",
     src : "data/Nivel01.tmx"
 }, {
-    name : "area02",
-    type : "tmx",
-    src : "data/tutorial2.tmx"
-}, {
     name : "personajillo",
     type : "image",
-    src : "data/sprite/personajillo.png"
+    src : "data/Texturas/personajillo.png"
 },
 // the parallax background
 {
@@ -38,23 +34,24 @@ var g_resources = [{
     type : "image",
     src : "data/area01_parallax/area01_bkg1.png"
 },
-// the spinning coin spritesheet
-{
-    name : "spinning_coin_gold",
-    type : "image",
-    src : "data/sprite/spinning_coin_gold.png"
-},
+
 // our enemty entity
 {
-    name : "wheelie_right",
+    name : "maloojo",
     type : "image",
-    src : "data/sprite/wheelie_right.png"
+    src : "data/Texturas/maloojo.png"
+},
+
+{
+    name : "button",
+    type : "image",
+    src : "data/Texturas/boton.png"
 },
 // game font
 {
     name : "32x32_font",
     type : "image",
-    src : "data/sprite/32x32_font.png"
+    src : "data/Texturas/32x32_font.png"
 },
 // audio resources
 {
@@ -110,7 +107,7 @@ var jsApp = {
 
         // load everything & display a loading screen
         me.state.change(me.state.LOADING);
-        //me.debug.renderHitBox = true;
+        me.debug.renderHitBox = true;
     },
     /* ---
 
@@ -129,7 +126,8 @@ var jsApp = {
 
         // add our player entity in the entity pool
         me.entityPool.add("mainPlayer", PlayerEntity);
-        me.entityPool.add("CoinEntity", CoinEntity);
+        //me.entityPool.add("CoinEntity", CoinEntity);
+        me.entityPool.add("ButtonEntity", ButtonEntity);
         me.entityPool.add("EnemyEntity", EnemyEntity);
 
         // enable the keyboard
@@ -159,7 +157,7 @@ var PlayScreen = me.ScreenObject.extend({
 
         // add a new HUD item
         me.game.HUD.addItem("score", new ScoreObject(620, 10));
-
+        me.game.HUD.updateItemValue("score", 100);
         // make sure everyhting is in the right order
         me.game.sort();
 

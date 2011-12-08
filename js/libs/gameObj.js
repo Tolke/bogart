@@ -21,21 +21,23 @@ var PlayerEntity = me.ObjectEntity.extend({
         //this.setFriction(0.5, 0.5);
     
         // adjust the bounding box
-        this.updateColRect(8, 48, -1, 0);
+        this.updateColRect(7, 50, -1, 0);
         
         // disable gravity
         this.gravity = 0;
 
         //this.firstUpdates = 0;
-        this.direction = 'left';
+    
     
         // set the display to follow our position on both axis
         me.game.viewport.follow(this.pos, me.game.viewport.AXIS.BOTH);
                        
-        this.addAnimation("down", [9,10,11,10]);
+        this.addAnimation("down", [9,11]);
         this.addAnimation("left", [0,1,2,1]);
-        this.addAnimation("up", [3,4,5,4]);
+        this.addAnimation("up", [3,5]);
         this.addAnimation("right", [6,7,8,7]);
+        this.addAnimation("stand", [7]);
+        this.setCurrentAnimation('stand');
 
         
     },
@@ -82,24 +84,26 @@ update: function() {
                 this.vel.y = 0;
             }
 
+    // check for collision
+    res = me.game.collide(this);
+    if (res) {
+        if (res.type == me.game.ENEMY_OBJECT) {
+                // bounce
+                me.audio.play("stomp");
+                // let's flicker in case we touched an enemy
+                
+                if(me.game.HUD.getItemValue("score") > 0){
+                    me.game.HUD.updateItemValue("score", -2);
+                    this.flicker(45);
+                }else{
+                    this.flicker(45, function (){me.game.remove(this)});
+                }     
+        }
+    }
+    
     // check & update player movement
     updated = this.updateMovement();
 
-    // check for collision
-    res = me.game.collide(this);
-    
-    if (res) {
-        if (res.type == me.game.ENEMY_OBJECT) {
-            if ((res.y > 0) && ! this.jumping) {
-                // bounce
-                me.audio.play("stomp");
-                this.forceJump();
-            } else {
-                // let's flicker in case we touched an enemy
-                this.flicker(45);
-            }
-        }
-    }
 
     // update animation
     if (updated) {
@@ -112,35 +116,51 @@ update: function() {
 });
 
 
-/*----------------
- a Coin entity
- ------------------------ */
-var CoinEntity = me.CollectableEntity.extend({
-    // extending the init function is not mandatory
-    // unless you need to add some extra initialization
-    init : function(x, y, settings) {
-        settings.image = "spinning_coin_gold";
-        settings.spritewidth = 32;
-        // call the parent constructor
-        this.parent(x, y, settings);
-        //print("Hola /n");
-    },
-    // this function is called by the engine, when
-    // an object is destroyed (here collected)
-
-    onDestroyEvent : function() {
-        // do something when collide
-        me.audio.play("cling");
-        // increase score
-        me.game.HUD.updateItemValue("score", 250);
-    }
-});
 
 /* --------------------------
- an enemy Entity
+ a button Entity
  ------------------------ */
-var EnemyEntity = me.ObjectEntity.extend({
+
+var ButtonEntity = me.ObjectEntity.extend({
+
     init : function(x, y, settings) {
+        // define this here instead of tiled
+        settings.image = "button";
+        settings.spritewidth = 40;
+
+        // call the parent constructor
+        this.parent(x, y, settings);
+
+        this.updateColRect(-1, 0, 10, 50);
+        // make it collidable
+        this.collidable = true;
+
+        // disable gravity
+        this.gravity = 0;
+        
+        this.addAnimation("down", [1]);
+        this.addAnimation("up", [0]);
+        this.setCurrentAnimation('up');
+
+    },
+    // call by the engine when colliding with another object
+    // obj parameter corresponds to the other object (typically the player) touching this one
+    onCollision : function(res, obj) {
+
+
+        this.setCurrentAnimation('down');
+         // do something when collide
+        me.audio.play("cling");
+        var t=setTimeout(function(ButtonEntity){ButtonEntity.setCurrentAnimation('up')},60000,this);
+
+    } 
+
+});
+/* --------------------------
+an enemy Entity
+------------------------ */
+var EnemyEntity = me.ObjectEntity.extend({
+    init: function(x, y, settings) {
         // define this here instead of tiled
         //settings.image = "wheelie_right";
         //settings.spritewidth = 64;
@@ -155,36 +175,38 @@ var EnemyEntity = me.ObjectEntity.extend({
         // make him start from the right
         this.pos.x = x + settings.width - settings.spritewidth;
         this.walkLeft = true;
+        // adjust the bounding box
+        this.updateColRect(-1, 0, 10, 50);
 
         // walking & jumping speed
         this.setVelocity(4, 6);
 
         // make it collidable
         this.collidable = true;
+        // disable gravity
+        this.gravity = 0;
+
         // make it a enemy object
         this.type = me.game.ENEMY_OBJECT;
 
     },
+
     // call by the engine when colliding with another object
     // obj parameter corresponds to the other object (typically the player) touching this one
-    onCollision : function(res, obj) {
+    onCollision: function(res, obj) {
 
         // res.y >0 means touched by something on the bottom
         // which mean at top position for this one
-        if(this.alive && (res.y > 0) && obj.falling) {
-            this.flicker(45);
-        }
-    },
-    // manage the enemy movement
-    update : function() {
-        // do nothing if not visible
-        if(!this.visible && !this.flickering)
-            return false;
 
-        if(this.alive) {
-            if(this.walkLeft && this.pos.x <= this.startX) {
+    },
+
+    // manage the enemy movement
+    update: function() {
+
+        if (this.alive) {
+            if (this.walkLeft && this.pos.x <= this.startX) {
                 this.walkLeft = false;
-            } else if(!this.walkLeft && this.pos.x >= this.endX) {
+            } else if (!this.walkLeft && this.pos.x >= this.endX) {
                 this.walkLeft = true;
             }
 
@@ -196,14 +218,13 @@ var EnemyEntity = me.ObjectEntity.extend({
         // check & update movement
         updated = this.updateMovement();
 
-        if(updated) {
+        if (updated) {
             // update the object animation
             this.parent();
         }
         return updated;
     }
 });
-
 /*--------------
  a score HUD Item
  --------------------- */
@@ -223,6 +244,7 @@ var ScoreObject = me.HUD_Item.extend({
     draw : function(context, x, y) {
         this.font.draw(context, this.value, this.pos.x + x, this.pos.y + y);
     }
+
 });
 
 /*----------------------
