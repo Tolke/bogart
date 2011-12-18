@@ -17,16 +17,12 @@ var PlayerEntity = me.ObjectEntity.extend({
         // set the walking & jumping speed
         this.setVelocity(3, 3);
         
-        // set the walking speed
-        //this.setFriction(0.5, 0.5);
     
         // adjust the bounding box
         this.updateColRect(7, 50, -1, 0);
         
         // disable gravity
         this.gravity = 0;
-
-        //this.firstUpdates = 0;
     
     
         // set the display to follow our position on both axis
@@ -89,15 +85,14 @@ update: function() {
     if (res) {
         if (res.type == me.game.ENEMY_OBJECT) {
                 // bounce
-                me.audio.play("stomp");
-                // let's flicker in case we touched an enemy
-                
-                if(me.game.HUD.getItemValue("score") > 0){
-                    me.game.HUD.updateItemValue("score", -2);
-                    this.flicker(45);
-                }else{
-                    this.flicker(45, function (){me.game.remove(this)});
-                }     
+                if(! this.flickering){
+                     me.audio.play("stomp");
+                     me.audio.play("grito");
+                    // let's flicker in case we touched an enemy
+                    this.flicker(30, function (){// load a level
+                    me.game.HUD.updateItemValue("score", - 1);
+                    me.levelDirector.loadLevel("area01");});
+                 }
         }
     }
     
@@ -147,12 +142,13 @@ var ButtonEntity = me.ObjectEntity.extend({
     // obj parameter corresponds to the other object (typically the player) touching this one
     onCollision : function(res, obj) {
 
-
-        this.setCurrentAnimation('down');
-         // do something when collide
-        me.audio.play("cling");
-        var t=setTimeout(function(ButtonEntity){ButtonEntity.setCurrentAnimation('up')},60000,this);
-
+        if(this.isCurrentAnimation('up')){
+            this.setCurrentAnimation('down');
+            // do something when collide
+            me.audio.play("boton4");
+            var t=setTimeout(function(ButtonEntity){ButtonEntity.setCurrentAnimation('up');
+                                                    me.audio.play("error");},10000,this);
+        }
     } 
 
 });
@@ -188,6 +184,15 @@ var EnemyEntity = me.ObjectEntity.extend({
 
         // make it a enemy object
         this.type = me.game.ENEMY_OBJECT;
+        
+        this.addAnimation("down", [9,11]);
+        this.addAnimation("left", [0,1,2,1]);
+        this.addAnimation("up", [3,5]);
+        this.addAnimation("right", [6,7,8,7]);
+        this.addAnimation("stand", [7]);
+        this.setCurrentAnimation('left');
+        this.direction = 'left';
+
 
     },
 
@@ -204,16 +209,113 @@ var EnemyEntity = me.ObjectEntity.extend({
     update: function() {
 
         if (this.alive) {
-            if (this.walkLeft && this.pos.x <= this.startX) {
-                this.walkLeft = false;
-            } else if (!this.walkLeft && this.pos.x >= this.endX) {
-                this.walkLeft = true;
+            if (this.pos.x <= this.startX) {
+                this.animationspeed = me.sys.fps / 10;
+                this.vel.x = this.accel.x * me.timer.tick * 0.7
+                this.vel.y = 0;
+                this.setCurrentAnimation('right');
+                this.direction = 'right';
+                
+            } else if (this.pos.x >= this.endX) {
+                this.animationspeed = me.sys.fps / 10;
+                this.vel.x = -this.accel.x * me.timer.tick * 0.7
+                this.vel.y = 0;
+                this.setCurrentAnimation('left')
+                this.direction = 'left'
+                
             }
 
             //console.log(this.walkLeft);
-            this.doWalk(this.walkLeft);
         } else {
             this.vel.x = 0;
+        }
+            
+        // check & update movement
+        updated = this.updateMovement();
+
+        if (updated) {
+            // update the object animation
+            this.parent();
+        }
+        return updated;
+    }
+});
+
+
+
+var EnemyEntityV = me.ObjectEntity.extend({
+    init: function(x, y, settings) {
+        // define this here instead of tiled
+        //settings.image = "wheelie_right";
+        //settings.spritewidth = 64;
+
+        // call the parent constructor
+        this.parent(x, y, settings);
+
+        this.startY = y;
+        this.endY = y + settings.height - settings.spritewidth;
+        // size of sprite
+
+        // make him start from the right
+        this.pos.y = y + settings.height - settings.spritewidth;
+        this.walkLeft = true;
+        // adjust the bounding box
+        this.updateColRect(-1, 0, 10, 50);
+
+        // walking & jumping speed
+        this.setVelocity(4, 6);
+
+        // make it collidable
+        this.collidable = true;
+        // disable gravity
+        this.gravity = 0;
+
+        // make it a enemy object
+        this.type = me.game.ENEMY_OBJECT;
+        
+        this.addAnimation("down", [9,11]);
+        this.addAnimation("left", [0,1,2,1]);
+        this.addAnimation("up", [3,5]);
+        this.addAnimation("right", [6,7,8,7]);
+        this.addAnimation("stand", [7]);
+        this.setCurrentAnimation('left');
+        this.direction = 'left';
+
+
+    },
+
+    // call by the engine when colliding with another object
+    // obj parameter corresponds to the other object (typically the player) touching this one
+    onCollision: function(res, obj) {
+
+        // res.y >0 means touched by something on the bottom
+        // which mean at top position for this one
+
+    },
+
+    // manage the enemy movement
+    update: function() {
+
+        if (this.alive) {
+            if (this.pos.y <= this.startY) {
+                this.animationspeed = me.sys.fps / 10;
+                this.vel.y = this.accel.x * me.timer.tick * 0.7
+                this.vel.x = 0;
+                this.setCurrentAnimation('down');
+                this.direction = 'down';
+                
+            } else if (this.pos.y >= this.endY) {
+                this.animationspeed = me.sys.fps / 10;
+                this.vel.y = -this.accel.x * me.timer.tick * 0.7
+                this.vel.x = 0;
+                this.setCurrentAnimation('up')
+                this.direction = 'up'
+                
+            }
+
+            //console.log(this.walkLeft);
+        } else {
+            this.vel.y = 0;
         }
         // check & update movement
         updated = this.updateMovement();
@@ -253,11 +355,6 @@ var ScoreObject = me.HUD_Item.extend({
 
  ----------------------*/
 
-/*----------------------
-
- A title screen
-
- ----------------------*/
 
 var TitleScreen = me.ScreenObject.extend({
     // constructor
@@ -279,6 +376,7 @@ var TitleScreen = me.ScreenObject.extend({
         if(this.title == null) {
             // init stuff if not yet done
             this.title = me.loader.getImage("title_screen");
+            me.audio.playTrack("menu");
             // font to display the menu items
             this.font = new me.BitmapFont("32x32_font", 32);
             this.font.set("left");

@@ -12,14 +12,38 @@ var g_resources = [{
     type : "image",
     src : "data/Texturas/atrezzo.png"
 }, {
+    name : "pueblo",
+    type : "image",
+    src : "data/Texturas/pueblo.png"
+},{
+    name : "mas sombras",
+    type : "image",
+    src : "data/Texturas/mas sombras.png"
+},{
     name : "sombras-par",
     type : "image",
     src : "data/Texturas/sombras-par.png"
-}, {
+}, 
+
+//Niveles
+
+{
     name : "area01",
     type : "tmx",
     src : "data/Nivel01.tmx"
-}, {
+},  {
+    name : "area02",
+    type : "tmx",
+    src : "data/Nivel02.tmx"
+},   {
+    name : "area03",
+    type : "tmx",
+    src : "data/Nivel03.tmx"
+}, 
+
+
+//Personaje
+{
     name : "personajillo",
     type : "image",
     src : "data/Texturas/personajillo.png"
@@ -43,6 +67,31 @@ var g_resources = [{
 },
 
 {
+    name : "malonota",
+    type : "image",
+    src : "data/Texturas/malonota.png"
+},
+
+{
+    name : "maloneurona",
+    type : "image",
+    src : "data/Texturas/maloneurona.png"
+},
+
+{
+    name : "maloneuronagrande",
+    type : "image",
+    src : "data/Texturas/maloneuronagrande.png"
+},
+
+{
+    name : "maloboca",
+    type : "image",
+    src : "data/Texturas/maloboca.png"
+},
+
+//Boton
+{
     name : "button",
     type : "image",
     src : "data/Texturas/boton.png"
@@ -55,22 +104,57 @@ var g_resources = [{
 },
 // audio resources
 {
-    name : "cling",
-    type : "audio",
-    src : "data/audio/",
-    channel : 2
-}, {
-    name : "stomp",
+    name: "cling",
+    type: "audio",
+    src: "data/audio/",
+    channel: 1
+},
+{
+    name: "boton4",
+    type: "audio",
+    src: "data/audio/",
+    channel: 2
+},{
+    name: "stomp",
+    type: "audio",
+    src: "data/audio/",
+    channel: 1
+},{
+    name: "grito",
+    type: "audio",
+    src: "data/audio/",
+    channel: 2
+},{
+    name: "error",
+    type: "audio",
+    src: "data/audio/",
+    channel: 2
+},{
+    name: "stomp",
+    type: "audio",
+    src: "data/audio/",
+    channel: 1
+},
+
+
+//music
+{
+    name : "nivel01",
     type : "audio",
     src : "data/audio/",
     channel : 1
 }, {
-    name : "jump",
+    name : "nivel02",
     type : "audio",
     src : "data/audio/",
     channel : 1
 }, {
-    name : "DST-InertExponent",
+    name : "nivel03",
+    type : "audio",
+    src : "data/audio/",
+    channel : 1
+}, {
+    name : "menu",
     type : "audio",
     src : "data/audio/",
     channel : 1
@@ -129,6 +213,7 @@ var jsApp = {
         //me.entityPool.add("CoinEntity", CoinEntity);
         me.entityPool.add("ButtonEntity", ButtonEntity);
         me.entityPool.add("EnemyEntity", EnemyEntity);
+        me.entityPool.add("EnemyEntityV", EnemyEntityV);
 
         // enable the keyboard
         me.input.bindKey(me.input.KEY.LEFT, "left");
@@ -147,7 +232,7 @@ var PlayScreen = me.ScreenObject.extend({
     onResetEvent : function() {
 
         // play the audio track
-        me.audio.playTrack("DST-InertExponent");
+        me.audio.playTrack("nivel01");
 
         // load a level
         me.levelDirector.loadLevel("area01");
