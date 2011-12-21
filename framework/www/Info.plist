@@ -2,7 +2,7 @@
 <!DOCTYPE plist PUBLIC "-//Nokia//DTD PLIST 1.0//EN" "http://www.nokia.com/DTDs/plist-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>DisplayName</key>
+	<key>Title in Progress</key>
 	<string>phonegap.wrt</string>
 	<key>Identifier</key>
 	<string>com.nitobi.phonegap.demo</string>
