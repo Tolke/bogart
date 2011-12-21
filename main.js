@@ -48,16 +48,6 @@ var g_resources = [{
     type : "image",
     src : "data/Texturas/personajillo.png"
 },
-// the parallax background
-{
-    name : "area01_bkg0",
-    type : "image",
-    src : "data/area01_parallax/area01_bkg0.png"
-}, {
-    name : "area01_bkg1",
-    type : "image",
-    src : "data/area01_parallax/area01_bkg1.png"
-},
 
 // our enemty entity
 {
