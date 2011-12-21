@@ -21,8 +21,38 @@
             $(document).ready(function() {
                 $('#f_dcha').click(function() {
                     var e = jQuery.Event('keydown', {
-                        which : 88,
-                        keyCode : 88,
+                        which : 39,
+                        keyCode : 39,
+                        charCode : 0
+                    });
+                    $(document).trigger(e);
+                    console.info('e: ', e);
+                });
+                
+                $('#f_izda').click(function() {
+                    var e = jQuery.Event('keydown', {
+                        which : 37,
+                        keyCode : 37,
+                        charCode : 0
+                    });
+                    $(document).trigger(e);
+                    console.info('e: ', e);
+                });
+                
+                $('#f_up').click(function() {
+                    var e = jQuery.Event('keydown', {
+                        which : 38,
+                        keyCode : 38,
+                        charCode : 0
+                    });
+                    $(document).trigger(e);
+                    console.info('e: ', e);
+                });
+                
+                $('#f_bajo').click(function() {
+                    var e = jQuery.Event('keydown', {
+                        which : 40,
+                        keyCode : 40,
                         charCode : 0
                     });
                     $(document).trigger(e);
