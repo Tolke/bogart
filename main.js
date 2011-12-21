@@ -244,7 +244,7 @@ var jsApp = {
         me.entityPool.add("LevelEntity04", LevelEntity04);
         // enable the keyboard
         me.input.bindKey(me.input.KEY.LEFT, "left");
-        me.input.bindKey(me.input.KEY.X, "right");
+        me.input.bindKey(me.input.KEY.RIGHT, "right");
         me.input.bindKey(me.input.KEY.UP, "up");
         me.input.bindKey(me.input.KEY.DOWN, "down");
         
