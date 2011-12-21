@@ -107,10 +107,16 @@ var g_resources = [{
     name: "cling",
     type: "audio",
     src: "data/audio/",
-    channel: 1
+    channel: 2
 },
 {
-    name: "boton4",
+    name: "ok",
+    type: "audio",
+    src: "data/audio/",
+    channel: 2
+},
+{
+    name: "boton",
     type: "audio",
     src: "data/audio/",
     channel: 2
@@ -118,7 +124,7 @@ var g_resources = [{
     name: "stomp",
     type: "audio",
     src: "data/audio/",
-    channel: 1
+    channel: 2
 },{
     name: "grito",
     type: "audio",
@@ -133,7 +139,7 @@ var g_resources = [{
     name: "stomp",
     type: "audio",
     src: "data/audio/",
-    channel: 1
+    channel: 2
 },
 
 
@@ -158,13 +164,35 @@ var g_resources = [{
     type : "audio",
     src : "data/audio/",
     channel : 1
+},{
+    name : "gameover",
+    type : "audio",
+    src : "data/audio/",
+    channel : 1
 },
 // title screen
 {
-    name : "title_screen",
+    name : "titulo",
     type : "image",
-    src : "data/GUI/title_screen.png"
-}];
+    src : "data/GUI/titulo.png"
+},{
+    name : "loading_nivel01",
+    type : "image",
+    src : "data/GUI/loading_nivel01.png"
+},{
+    name : "loading_nivel02",
+    type : "image",
+    src : "data/GUI/loading_nivel02.png"
+},{
+    name : "loading_nivel03",
+    type : "image",
+    src : "data/GUI/loading_nivel03.png"
+},{
+    name : "game_over",
+    type : "image",
+    src : "data/GUI/game_over.png"
+}
+];
 
 var jsApp = {
     /* ---
@@ -175,7 +203,7 @@ var jsApp = {
     onload : function() {
 
         // init the video
-        if(!me.video.init('jsapp', 640, 480, false, 1.0)) {
+        if(!me.video.init('jsapp', 954, 594, false, 1.0)) {
             alert("Sorry but your browser does not support html 5 canvas.");
             return;
         }
@@ -191,7 +219,8 @@ var jsApp = {
 
         // load everything & display a loading screen
         me.state.change(me.state.LOADING);
-        me.debug.renderHitBox = true;
+        //me.debug.renderHitBox = true;
+
     },
     /* ---
 
@@ -204,6 +233,10 @@ var jsApp = {
 
         // set the "Play/Ingame" Screen Object
         me.state.set(me.state.PLAY, new PlayScreen());
+        
+        //set the Ready
+        me.state.set(me.state.READY, new ReadyScreen());
+        me.state.set(me.state.GAMEOVER, new GameOverScreen());
 
         // set a global fading transition for the screen
         me.state.transition("fade", "#FFFFFF", 15);
@@ -211,55 +244,28 @@ var jsApp = {
         // add our player entity in the entity pool
         me.entityPool.add("mainPlayer", PlayerEntity);
         //me.entityPool.add("CoinEntity", CoinEntity);
-        me.entityPool.add("ButtonEntity", ButtonEntity);
+        me.entityPool.add("ButtonEntity01", ButtonEntity01);
+        me.entityPool.add("ButtonEntity02", ButtonEntity02);
+        me.entityPool.add("ButtonEntity03", ButtonEntity03);
         me.entityPool.add("EnemyEntity", EnemyEntity);
         me.entityPool.add("EnemyEntityV", EnemyEntityV);
-
+        me.entityPool.add("LevelEntity02", LevelEntity02);
+        me.entityPool.add("LevelEntity03", LevelEntity03);
+        me.entityPool.add("LevelEntity04", LevelEntity04);
         // enable the keyboard
         me.input.bindKey(me.input.KEY.LEFT, "left");
         me.input.bindKey(me.input.KEY.RIGHT, "right");
         me.input.bindKey(me.input.KEY.UP, "up");
         me.input.bindKey(me.input.KEY.DOWN, "down");
-
+        
+        
         // display the menu title
         me.state.change(me.state.MENU);
     }
 };
 // jsApp
 /* the in game stuff*/
-var PlayScreen = me.ScreenObject.extend({
 
-    onResetEvent : function() {
-
-        // play the audio track
-        me.audio.playTrack("nivel01");
-
-        // load a level
-        me.levelDirector.loadLevel("area01");
-
-        // add a default HUD to the game mngr
-        me.game.addHUD(0, 430, 640, 60);
-
-        // add a new HUD item
-        me.game.HUD.addItem("score", new ScoreObject(620, 10));
-        me.game.HUD.updateItemValue("score", 100);
-        // make sure everyhting is in the right order
-        me.game.sort();
-
-    },
-    /* ---
-
-     action to perform when game is finished (state change)
-
-     --- */
-    onDestroyEvent : function() {
-        // remove the HUD
-        me.game.disableHUD();
-
-        // stop the current audio track
-        me.audio.stopTrack();
-    }
-});
 
 //bootstrap :)
 window.onReady(function() {

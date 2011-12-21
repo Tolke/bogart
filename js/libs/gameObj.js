@@ -19,7 +19,7 @@ var PlayerEntity = me.ObjectEntity.extend({
         
     
         // adjust the bounding box
-        this.updateColRect(7, 50, -1, 0);
+        this.updateColRect(9, 46, 2, 56);
         
         // disable gravity
         this.gravity = 0;
@@ -83,16 +83,24 @@ update: function() {
     // check for collision
     res = me.game.collide(this);
     if (res) {
+        //this.flicker(40);
         if (res.type == me.game.ENEMY_OBJECT) {
                 // bounce
                 if(! this.flickering){
                      me.audio.play("stomp");
                      me.audio.play("grito");
                     // let's flicker in case we touched an enemy
-                    this.flicker(30, function (){// load a level
-                    me.game.HUD.updateItemValue("score", - 1);
-                    me.levelDirector.loadLevel("area01");});
-                 }
+                    if(me.game.HUD.getItemValue("vidas") == 0){
+                        this.flicker(40, function (){// load a level
+                            me.state.change(me.state.GAMEOVER);
+                        })
+                    }else{
+                        this.flicker(40, function (){// load a level
+                            me.game.HUD.updateItemValue("vidas", - 1);
+                            me.state.change(me.state.PLAY);
+                        })
+                    }
+                }
         }
     }
     
@@ -116,7 +124,7 @@ update: function() {
  a button Entity
  ------------------------ */
 
-var ButtonEntity = me.ObjectEntity.extend({
+var ButtonEntity01 = me.ObjectEntity.extend({
 
     init : function(x, y, settings) {
         // define this here instead of tiled
@@ -145,9 +153,110 @@ var ButtonEntity = me.ObjectEntity.extend({
         if(this.isCurrentAnimation('up')){
             this.setCurrentAnimation('down');
             // do something when collide
-            me.audio.play("boton4");
-            var t=setTimeout(function(ButtonEntity){ButtonEntity.setCurrentAnimation('up');
-                                                    me.audio.play("error");},10000,this);
+            me.audio.play("boton");
+            me.gamestat.updateValue("botones01", -1);
+            if (me.gamestat.getItemValue("botones01") == 0){
+                me.audio.play("ok");
+            }
+            var t=setTimeout(function(ButtonEntity){
+                if((me.gamestat.getItemValue("botones01") > 0) && (!this.isCurrentAnimation('up'))){
+                    ButtonEntity.setCurrentAnimation('up');
+                    me.audio.play("error");
+                    me.gamestat.updateValue("botones01", 1);
+                }
+            },40000,this);
+        }
+    } 
+
+});
+
+var ButtonEntity02 = me.ObjectEntity.extend({
+
+    init : function(x, y, settings) {
+        // define this here instead of tiled
+        settings.image = "button";
+        settings.spritewidth = 40;
+
+        // call the parent constructor
+        this.parent(x, y, settings);
+
+        this.updateColRect(-1, 0, 10, 50);
+        // make it collidable
+        this.collidable = true;
+
+        // disable gravity
+        this.gravity = 0;
+        
+        this.addAnimation("down", [1]);
+        this.addAnimation("up", [0]);
+        this.setCurrentAnimation('up');
+
+    },
+    // call by the engine when colliding with another object
+    // obj parameter corresponds to the other object (typically the player) touching this one
+    onCollision : function(res, obj) {
+
+        if(this.isCurrentAnimation('up')){
+            this.setCurrentAnimation('down');
+            // do something when collide
+            me.audio.play("boton");
+            me.gamestat.updateValue("botones02", -1);
+            if (me.gamestat.getItemValue("botones02") == 0){
+                me.audio.play("ok");
+            }
+            var t=setTimeout(function(ButtonEntity){
+                if((me.gamestat.getItemValue("botones02") > 0) && (!this.isCurrentAnimation('up'))){
+                    ButtonEntity.setCurrentAnimation('up');
+                    me.audio.play("error");
+                    me.gamestat.updateValue("botones02", 1);
+                }
+            },80000,this);
+        }
+    } 
+
+});
+
+var ButtonEntity03 = me.ObjectEntity.extend({
+
+    init : function(x, y, settings) {
+        // define this here instead of tiled
+        settings.image = "button";
+        settings.spritewidth = 40;
+
+        // call the parent constructor
+        this.parent(x, y, settings);
+
+        this.updateColRect(-1, 0, 10, 50);
+        // make it collidable
+        this.collidable = true;
+
+        // disable gravity
+        this.gravity = 0;
+        
+        this.addAnimation("down", [1]);
+        this.addAnimation("up", [0]);
+        this.setCurrentAnimation('up');
+
+    },
+    // call by the engine when colliding with another object
+    // obj parameter corresponds to the other object (typically the player) touching this one
+    onCollision : function(res, obj) {
+
+        if(this.isCurrentAnimation('up')){
+            this.setCurrentAnimation('down');
+            // do something when collide
+            me.audio.play("boton");
+            me.gamestat.updateValue("botones03", -1);
+            if (me.gamestat.getItemValue("botones03") == 0){
+                me.audio.play("ok");
+            }
+            var t=setTimeout(function(ButtonEntity){
+                if((me.gamestat.getItemValue("botones03") > 0) && (!this.isCurrentAnimation('up'))){
+                    ButtonEntity.setCurrentAnimation('up');
+                    me.audio.play("error");
+                    me.gamestat.updateValue("botones03", 1);
+                }
+            },100000,this);
         }
     } 
 
@@ -157,11 +266,7 @@ an enemy Entity
 ------------------------ */
 var EnemyEntity = me.ObjectEntity.extend({
     init: function(x, y, settings) {
-        // define this here instead of tiled
-        //settings.image = "wheelie_right";
-        //settings.spritewidth = 64;
 
-        // call the parent constructor
         this.parent(x, y, settings);
 
         this.startX = x;
@@ -172,7 +277,7 @@ var EnemyEntity = me.ObjectEntity.extend({
         this.pos.x = x + settings.width - settings.spritewidth;
         this.walkLeft = true;
         // adjust the bounding box
-        this.updateColRect(-1, 0, 10, 50);
+        this.updateColRect(6, 48, 6, 52);
 
         // walking & jumping speed
         this.setVelocity(4, 6);
@@ -196,36 +301,24 @@ var EnemyEntity = me.ObjectEntity.extend({
 
     },
 
-    // call by the engine when colliding with another object
-    // obj parameter corresponds to the other object (typically the player) touching this one
-    onCollision: function(res, obj) {
-
-        // res.y >0 means touched by something on the bottom
-        // which mean at top position for this one
-
-    },
-
-    // manage the enemy movement
     update: function() {
 
         if (this.alive) {
             if (this.pos.x <= this.startX) {
                 this.animationspeed = me.sys.fps / 10;
-                this.vel.x = this.accel.x * me.timer.tick * 0.7
+                this.vel.x = this.accel.x * me.timer.tick * 0.75
                 this.vel.y = 0;
                 this.setCurrentAnimation('right');
                 this.direction = 'right';
                 
             } else if (this.pos.x >= this.endX) {
                 this.animationspeed = me.sys.fps / 10;
-                this.vel.x = -this.accel.x * me.timer.tick * 0.7
+                this.vel.x = -this.accel.x * me.timer.tick * 0.75
                 this.vel.y = 0;
                 this.setCurrentAnimation('left')
                 this.direction = 'left'
                 
             }
-
-            //console.log(this.walkLeft);
         } else {
             this.vel.x = 0;
         }
@@ -245,10 +338,6 @@ var EnemyEntity = me.ObjectEntity.extend({
 
 var EnemyEntityV = me.ObjectEntity.extend({
     init: function(x, y, settings) {
-        // define this here instead of tiled
-        //settings.image = "wheelie_right";
-        //settings.spritewidth = 64;
-
         // call the parent constructor
         this.parent(x, y, settings);
 
@@ -260,7 +349,7 @@ var EnemyEntityV = me.ObjectEntity.extend({
         this.pos.y = y + settings.height - settings.spritewidth;
         this.walkLeft = true;
         // adjust the bounding box
-        this.updateColRect(-1, 0, 10, 50);
+        this.updateColRect(6, 48, 6, 52);
 
         // walking & jumping speed
         this.setVelocity(4, 6);
@@ -284,29 +373,20 @@ var EnemyEntityV = me.ObjectEntity.extend({
 
     },
 
-    // call by the engine when colliding with another object
-    // obj parameter corresponds to the other object (typically the player) touching this one
-    onCollision: function(res, obj) {
-
-        // res.y >0 means touched by something on the bottom
-        // which mean at top position for this one
-
-    },
-
     // manage the enemy movement
     update: function() {
 
         if (this.alive) {
             if (this.pos.y <= this.startY) {
                 this.animationspeed = me.sys.fps / 10;
-                this.vel.y = this.accel.x * me.timer.tick * 0.7
+                this.vel.y = this.accel.x * me.timer.tick * 0.75
                 this.vel.x = 0;
                 this.setCurrentAnimation('down');
                 this.direction = 'down';
                 
             } else if (this.pos.y >= this.endY) {
                 this.animationspeed = me.sys.fps / 10;
-                this.vel.y = -this.accel.x * me.timer.tick * 0.7
+                this.vel.y = -this.accel.x * me.timer.tick * 0.75
                 this.vel.x = 0;
                 this.setCurrentAnimation('up')
                 this.direction = 'up'
@@ -327,6 +407,56 @@ var EnemyEntityV = me.ObjectEntity.extend({
         return updated;
     }
 });
+
+/*-------------- 
+ a Level entity
+ --------------------- */
+var LevelEntity02 = me.LevelEntity.extend({
+    init: function(x, y, settings) {
+        this.parent(x, y, settings);
+    },
+    onCollision: function(res, obj) {
+        if ((me.gamestat.getItemValue("botones01") == 0) && (!me.gamestat.getItemValue("area01_completed"))){
+          me.gamestat.updateValue("area01_completed", true);
+          me.state.change(me.state.READY);
+          
+        }else{
+           me.audio.play("error"); 
+        }
+    }
+});
+
+var LevelEntity03 = me.LevelEntity.extend({
+    init: function(x, y, settings) {
+        this.parent(x, y, settings);
+    },
+    onCollision: function(res, obj) {
+        if ((me.gamestat.getItemValue("botones02") == 0) && (!me.gamestat.getItemValue("area02_completed"))){
+          me.gamestat.updateValue("area02_completed", true);
+          me.state.change(me.state.READY);
+
+        }else{
+           me.audio.play("error"); 
+        }
+    }
+});
+    
+
+var LevelEntity04 = me.LevelEntity.extend({
+    init: function(x, y, settings) {
+        this.parent(x, y, settings);
+    },
+    onCollision: function(res, obj) {
+        if ((me.gamestat.getItemValue("botones03") == 0) && (!me.gamestat.getItemValue("area03_completed"))){
+            me.gamestat.updateValue("area03_completed", true);
+            me.state.change(me.state.GAMEOVER);
+        }else{
+           me.audio.play("error"); 
+        }
+    }
+});  
+
+    
 /*--------------
  a score HUD Item
  --------------------- */
@@ -367,16 +497,25 @@ var TitleScreen = me.ScreenObject.extend({
         this.font = null;
         this.scrollerfont = null;
         this.scrollertween = null;
-
-        this.scroller = "A SMALL STEP BY STEP TUTORIAL FOR GAME CREATION WITH MELONJS       ";
+        
+        this.scroller = "BOGART, EL MEJOR JUEGO DEL MUNDO :D       ";
         this.scrollerpos = 600;
+                //gamestats
+        
     },
     // reset function
     onResetEvent : function() {
+        me.game.disableHUD();
+        me.audio.playTrack("menu");
+        me.gamestat.add("area01_completed", false);
+        me.gamestat.add("area02_completed", false);
+        me.gamestat.add("area03_completed", false);
+        
+        
         if(this.title == null) {
             // init stuff if not yet done
-            this.title = me.loader.getImage("title_screen");
-            me.audio.playTrack("menu");
+            this.title = me.loader.getImage("titulo");
+            
             // font to display the menu items
             this.font = new me.BitmapFont("32x32_font", 32);
             this.font.set("left");
@@ -414,7 +553,7 @@ var TitleScreen = me.ScreenObject.extend({
     update : function() {
         // enter pressed ?
         if(me.input.isKeyPressed('enter')) {
-            me.state.change(me.state.PLAY);
+            me.state.change(me.state.READY);
         }
         return true;
     },
@@ -428,8 +567,144 @@ var TitleScreen = me.ScreenObject.extend({
     // destroy function
     onDestroyEvent : function() {
         me.input.unbindKey(me.input.KEY.ENTER);
-
+        me.audio.stopTrack();
         //just in case
         this.scrollertween.stop();
+    },
+});
+
+
+
+var PlayScreen = me.ScreenObject.extend({
+
+    onResetEvent : function() {
+        me.gamestat.add("botones01", 4);
+        me.gamestat.add("botones02", 5);
+        me.gamestat.add("botones03", 6);
+        // play the audio track
+        if(me.gamestat.getItemValue("area02_completed")){
+                me.audio.playTrack("nivel03");
+                me.levelDirector.loadLevel("area03");
+            }else if(me.gamestat.getItemValue("area01_completed")){
+                me.audio.playTrack("nivel02");
+                me.levelDirector.loadLevel("area02");
+            }else{
+                me.audio.playTrack("nivel01");
+                me.levelDirector.loadLevel("area01");
+            }
+        me.game.sort();
+       
+
+    },
+    /* ---
+
+     action to perform when game is finished (state change)
+
+     --- */
+    onDestroyEvent : function() {
+        // remove the HUD
+       // me.game.disableHUD();
+
+        // stop the current audio track
+        me.audio.stopTrack();
+    }
+});
+
+
+
+var ReadyScreen = me.ScreenObject.extend({
+    // constructor
+    init : function() {
+        this.parent(true);
+
+        // title screen image
+        this.title = null;
+        
+        this.font = new me.BitmapFont("32x32_font", 32);
+        this.font.set("left");
+
+    },
+    // reset function
+    onResetEvent : function() {
+        me.game.disableHUD();
+        me.game.addHUD(0, 540, 900, 60);
+        // add a new HUD item
+        me.game.HUD.addItem("vidas", new ScoreObject(900, 10));
+        me.game.HUD.updateItemValue("vidas", 3);
+       if(me.gamestat.getItemValue("area02_completed")){
+            this.title = me.loader.getImage("loading_nivel03");
+        }else if(me.gamestat.getItemValue("area01_completed")){
+            this.title = me.loader.getImage("loading_nivel02");
+        }else{
+            this.title = me.loader.getImage("loading_nivel01");
+        }
+
+        // enable the keyboard
+        me.input.bindKey(me.input.KEY.ENTER, "enter", true);
+
+        // play something
+        me.audio.play("cling");
+
+    },
+    // update function
+    update : function() {
+        // enter pressed ?
+        if(me.input.isKeyPressed('enter')) {
+                me.state.change(me.state.PLAY);
+        }
+        return true;
+    },
+    // draw function
+    draw : function(context) {
+        context.drawImage(this.title, 0, 0);
+        //this.font.draw(context, "PRESS ENTER TO PLAY", 20, 240);
+    },
+    // destroy function
+    onDestroyEvent : function() {
+        me.input.unbindKey(me.input.KEY.ENTER);
+    },
+});
+
+var GameOverScreen = me.ScreenObject.extend({
+    // constructor
+    init : function() {
+        this.parent(true);
+
+        // title screen image
+        this.title = null;
+        
+        this.font = new me.BitmapFont("32x32_font", 32);
+        this.font.set("left");
+
+    },
+    // reset function
+    onResetEvent : function() {
+        me.game.disableHUD();
+        me.audio.playTrack("gameover");
+        this.title = me.loader.getImage("game_over");
+       
+        // enable the keyboard
+        me.input.bindKey(me.input.KEY.ENTER, "enter", true);
+
+        // play something
+        me.audio.play("cling");
+
+    },
+    // update function
+    update : function() {
+        // enter pressed ?
+        if(me.input.isKeyPressed('enter')) {
+                me.state.change(me.state.MENU);
+        }
+        return true;
+    },
+    // draw function
+    draw : function(context) {
+        context.drawImage(this.title, 0, 0);
+        this.font.draw(context, "PRESS ENTER TO PLAY", 20, 240);
+    },
+    // destroy function
+    onDestroyEvent : function() {
+        me.input.unbindKey(me.input.KEY.ENTER);
     },
 });
