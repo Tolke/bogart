@@ -5,3 +5,49 @@ body {
 	font-family: Courier;
 	
 }
+
+.wrap {
+    position: relative;
+    width: 954px;
+    height: 594px;
+}
+
+.dcha {
+    position: absolute;
+    float: right;
+    top: 50%;
+    left: 97.5%;
+    width: 20px;
+    height: 20px;
+    z-index: 1000;
+}
+
+.izda {
+    position: absolute;
+    float: right;
+    top: 50%;
+    left: 0%;
+    width: 20px;
+    height: 20px;
+    z-index: 1000;
+}
+
+.up {
+    position: absolute;
+    float: right;
+    top: 0%;
+    left: 50%;
+    width: 20px;
+    height: 20px;
+    z-index: 1000;
+}
+
+.bajo {
+    position: absolute;
+    float: right;
+    top: 95%;
+    left: 50%;
+    width: 20px;
+    height: 20px;
+    z-index: 1000;
+}
