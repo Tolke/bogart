@@ -61,10 +61,15 @@
                     console.info('e: ', e);
                 });
 
-                $(document).bind('keydown', function(e) {
+                /*$(document).bind('keydown', function(e) {
                     console.info('evento: ', e);
-                });
+                });*/
             });
+            
+            $(document).bind("mobileinit", function(){
+                $.mobile.allowCrossDomainPages = true;
+                $.support.cors = true;
+            })
 
         </script>
     </head>
@@ -91,6 +96,7 @@
         <div data-role="page" id="ins" data-theme="a">
             <div data-role="header">
                 <h1>Instrucciones</h1>
+                <a href="#home" data-rel="back" data-role="button" data-inline="true" data-transition="fade" data-theme="e" data-icon="back" style="margin-top: 3px">BACK</a>
             </div><!-- /header -->
             <div data-role="content" data-theme="a">
                 <p>
@@ -102,7 +108,7 @@
             <div data-role="content">
                 <div class="wrap">
                     <div class="dcha" id="f_dcha">
-                        <img src="data/GUI/dcha.png" />
+                        <img src="data/GUI/dcha.png" /> 
                     </div>
                     <div class="izda" id="f_izda">
                         <img src="data/GUI/izda.png" />
@@ -120,6 +126,7 @@
         <div data-role="page" id="cred" data-theme="a">
             <div data-role="header">
                 <h1>Creditos</h1>
+                <a href="#home" data-rel="back" data-role="button" data-inline="true" data-transition="fade" data-theme="e" data-icon="back" style="margin-top: 3px">BACK</a>
             </div><!-- /header -->
             <div data-role="content" data-theme="a">
                 <p>
