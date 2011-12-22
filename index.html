@@ -18,7 +18,19 @@
         <script src="js/libs/gameObj.js"></script>
         <script src="main.js"></script>
         <script>
-            jQuery.event.props.push("dataTransfer");
+            function onload() {
+                document.getElementById('touchstart').addEventListener('touchstart', hello(e), false);
+                document.getElementById('touchend').addEventListener('touchend', bye, false);
+            }
+
+            function hello(e) {
+                alert('event: ' + e);
+            }
+
+            function bye() {
+                alert('bye');
+            }
+
 
             $(document).ready(function() {
                 $('#f_dcha').click(function() {
@@ -77,7 +89,7 @@
             })
         </script>
     </head>
-    <body>
+    <body onload="onload();">
         <div data-role="page" id="home" data-theme="a">
             <div data-role="header" data-theme="b">
                 <h1>Bogart</h1>
