@@ -28,7 +28,7 @@
                         charCode : 0
                     });
                     $('#jsapp').trigger(e);
-                    console.info('e: ', e);
+                    //console.info('e: ', e);
                 });
 
                 $('#f_izda').click(function() {
@@ -38,7 +38,13 @@
                         charCode : 0
                     });
                     $('#jsapp').trigger(e);
-                    console.info('e: ', e);
+                    var ev = jQuery.Event('keydown', {
+                        which : 13,
+                        keyCode : 13,
+                        charCode : 0
+                    });
+                    $('#jsapp').trigger(ev);
+                    //console.info('e: ', e);
                 });
 
                 $('#f_up').click(function() {
@@ -48,7 +54,7 @@
                         charCode : 0
                     });
                     $('#jsapp').trigger(e);
-                    console.info('e: ', e);
+                    //console.info('e: ', e);
                 });
 
                 $('#f_bajo').click(function() {
@@ -58,19 +64,17 @@
                         charCode : 0
                     });
                     $('#jsapp').trigger(e);
-                    console.info('e: ', e);
+                    //console.info('e: ', e);
                 });
-
                 /*$(document).bind('keydown', function(e) {
-                    console.info('evento: ', e);
-                });*/
+                 console.info('evento: ', e);
+                 });*/
             });
-            
-            $(document).bind("mobileinit", function(){
+
+            $(document).bind("mobileinit", function() {
                 $.mobile.allowCrossDomainPages = true;
                 $.support.cors = true;
             })
-
         </script>
     </head>
     <body>
@@ -108,7 +112,7 @@
             <div data-role="content">
                 <div class="wrap">
                     <div class="dcha" id="f_dcha">
-                        <img src="data/GUI/dcha.png" /> 
+                        <img src="data/GUI/dcha.png" />
                     </div>
                     <div class="izda" id="f_izda">
                         <img src="data/GUI/izda.png" />
